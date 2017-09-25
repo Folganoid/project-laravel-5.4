@@ -8,9 +8,7 @@
 
 return
     [
-
-
-
+        'slider_path' => 'slider-cycle',
     ];
 
 ?>
