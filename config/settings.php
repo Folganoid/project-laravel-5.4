@@ -9,6 +9,7 @@
 return
     [
         'slider_path' => 'slider-cycle',
+        'hom_port_count' => 5,
     ];
 
 ?>
