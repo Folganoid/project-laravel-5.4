@@ -5,7 +5,7 @@
 
             @set($hash, isset($item->email) ? md5($item->email) : md5($item->user-email))
 
-            <img alt="" src="https://www.gravatar.com/avatar/{{ $hash }}?d==mm&s=75" class="avatar" height="75" width="75" />
+            <img alt="" src="https://www.gravatar.com/avatar/{{ $hash }}?d=mm&s=75" class="avatar" height="75" width="75" />
             <cite class="fn">{{ $item->user->name or $item->name }}</cite>
         </div>
         <!-- .comment-author .vcard -->
@@ -16,7 +16,7 @@
                         {{ is_object($item->created_at) ? $item->created_at->format('F d, Y \a\t H:i') : '' }}
                     </a>
                 </div>
-                <div class="commentNumber">#&nbsp;</div>
+                <div class="commentNumber">#</div>
             </div>
             <div class="comment-body">
                 <p>{{ $item->text }}</p>
