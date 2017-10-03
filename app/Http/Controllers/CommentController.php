@@ -2,6 +2,12 @@
 
 namespace Corp\Http\Controllers;
 
+use Validator;
+use Auth;
+use Response;
+use Corp\Comment;
+use Corp\Article;
+
 use Illuminate\Http\Request;
 
 class CommentController extends Controller
@@ -35,6 +41,40 @@ class CommentController extends Controller
     public function store(Request $request)
     {
         //
+        $data = $request->except('_token', 'comment_post_ID', 'comment_parent');
+
+        $data['article_id'] = $request->input('comment_post_ID');
+        $data['parent_id'] = $request->input('comment_parent');
+
+        $validator = Validator::make($data, [
+
+            'article_id' => 'integer|required',
+            'parent_id' => 'integer|required',
+            'text' => 'string|required'
+
+        ]);
+
+        $validator->sometimes(['name', 'email'], 'required|max:255', function($input) {
+
+            return !Auth::check();
+
+        });
+
+        if($validator->fails()) {
+            return \Response::json(['error' => $validator->errors()->all()]);
+        }
+
+        $user = Auth::user();
+
+        $comment = new Comment($data);
+
+        if($user) {
+            $comment->user_id = $user->id;
+        }
+
+        $post = Article::find($data['article_id']);
+        $post->comment()->save($comment);
+
         echo json_encode(['hello' => 'world']);
         exit();
     }
