@@ -27,6 +27,10 @@ class ArticlesController extends SiteController
     public function index($cat_alias = FALSE)
     {
 
+        $this->title = 'Blog';
+        $this->keywords = 'String';
+        $this->meta_desc = 'String';
+
         $articles = $this->getArticles($cat_alias);
 
         $content = view(env('THEME').'.articles_content')->with('articles', $articles)->render();
@@ -67,7 +71,7 @@ class ArticlesController extends SiteController
 
         }
 
-        $articles = $this->a_rep->get(['id', 'title', 'alias', 'created_at', 'img', 'desc', 'user_id', 'category_id'], FALSE, TRUE, $where);
+        $articles = $this->a_rep->get(['id', 'title', 'alias', 'created_at', 'img', 'desc', 'user_id', 'category_id', 'keywords', 'meta_desc'], FALSE, TRUE, $where);
 
         if($articles) {
             $articles->load('user', 'category', 'comment');
@@ -84,6 +88,10 @@ class ArticlesController extends SiteController
         if($article) {
             $article->img = json_decode($article->img);
         }
+
+        $this->title = $article->title;
+        $this->keywords = $article->keywords;
+        $this->meta_desc = $article->meta_desc;
 
         $content = view(env('THEME').'.article_content')->with('article', $article)->render();
         $this->vars = array_add($this->vars, 'content', $content);

@@ -55,9 +55,9 @@
         <div class="clear"></div>
     </div>
     <!-- START COMMENTS -->
-    <div id="comments">
-    </div>
+    <div id="comments"></div>
     <!-- END COMMENTS -->
+
 </div>
 @else
     <p>Empty</p>
