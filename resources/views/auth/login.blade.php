@@ -1,69 +1,36 @@
-@extends('layouts.app')
+@extends(env('THEME').'.layouts.site')
 
 @section('content')
-<div class="container">
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2">
-            <div class="panel panel-default">
-                <div class="panel-heading">Login</div>
 
-                <div class="panel-body">
-                    <form class="form-horizontal" method="POST" action="{{ route('login') }}">
-                        {{ csrf_field() }}
+    <div class="content group">
+        <form id="contact-form-contact-us" class="contact-form" method="post" action="{{ url('/login') }}">
 
-                        <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
-                            <label for="email" class="col-md-4 control-label">E-Mail Address</label>
+            {{ csrf_field() }}
 
-                            <div class="col-md-6">
-                                <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" required autofocus>
-
-                                @if ($errors->has('email'))
-                                    <span class="help-block">
-                                        <strong>{{ $errors->first('email') }}</strong>
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
-
-                        <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
-                            <label for="password" class="col-md-4 control-label">Password</label>
-
-                            <div class="col-md-6">
-                                <input id="password" type="password" class="form-control" name="password" required>
-
-                                @if ($errors->has('password'))
-                                    <span class="help-block">
-                                        <strong>{{ $errors->first('password') }}</strong>
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="col-md-6 col-md-offset-4">
-                                <div class="checkbox">
-                                    <label>
-                                        <input type="checkbox" name="remember" {{ old('remember') ? 'checked' : '' }}> Remember Me
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="col-md-8 col-md-offset-4">
-                                <button type="submit" class="btn btn-primary">
-                                    Login
-                                </button>
-
-                                <a class="btn btn-link" href="{{ route('password.request') }}">
-                                    Forgot Your Password?
-                                </a>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+            <fieldset>
+                <ul>
+                    <li class="text-field">
+                        <label for="login">
+                            <span class="label">Name</span>
+                            <br />					<span class="sublabel">This is the name</span><br />
+                        </label>
+                        <div class="input-prepend"><span class="add-on"><i class="icon-user"></i></span><input type="text" name="login" id="login" class="required" value="" /></div>
+                    </li>
+                    <li class="text-field">
+                        <label for="password">
+                            <span class="label">Password</span>
+                            <br />					<span class="sublabel">This is a field password</span><br />
+                        </label>
+                        <div class="input-prepend"><span class="add-on"><i class="icon-lock"></i></span><input type="password" name="password" id="password" class="required" value="" /></div>
+                    </li>
+                    <li class="submit-button">
+                        <input type="submit" name="yit_sendmail" value="Отправить" class="sendmail alignright" />
+                    </li>
+                </ul>
+            </fieldset>
+        </form>
     </div>
-</div>
+
+
+
 @endsection

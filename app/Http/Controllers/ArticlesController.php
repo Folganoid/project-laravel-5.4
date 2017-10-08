@@ -22,7 +22,8 @@ class ArticlesController extends SiteController
         $this->c_rep = $c_rep;
         $this->bar = 'right';
         $this->template = env('THEME').'.articles';
-    }
+
+   }
 
     public function index($cat_alias = FALSE)
     {
