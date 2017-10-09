@@ -6,6 +6,7 @@ use Corp\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Menu;
 use Auth;
+use Gate;
 
 class AdminController extends Controller
 {
@@ -18,12 +19,10 @@ class AdminController extends Controller
     protected $title;
     protected $vars;
 
-    public function __construct() {
-
+    public function checkAuth() {
         $this->user = Auth::user();
-
         if(!$this->user) {
-          // abort(403);
+           abort(403);
         }
     }
 
@@ -52,13 +51,19 @@ class AdminController extends Controller
 
         return Menu::make('adminMenu', function($menu) {
 
-            $menu->add('Статьи', ['route' => 'adminIndex']);
-            $menu->add('Портфолио', ['route' => 'adminIndex']);
-            $menu->add('Меню', ['route' => 'adminIndex']);
-            $menu->add('Пользователи', ['route' => 'adminIndex']);
-            $menu->add('Привилегии', ['route' => 'adminIndex']);
-
+            $menu->add('Статьи', ['route' => 'articles.index']);
+            $menu->add('Портфолио', ['route' => 'articles.index']);
+            $menu->add('Меню', ['route' => 'articles.index']);
+            $menu->add('Пользователи', ['route' => 'articles.index']);
+            $menu->add('Привилегии', ['route' => 'articles.index']);
         });
+    }
+
+    public function start($role) {
+        $this->checkAuth();
+        if(Gate::denies($role)) {
+            abort(403);
+        }
     }
 
 }

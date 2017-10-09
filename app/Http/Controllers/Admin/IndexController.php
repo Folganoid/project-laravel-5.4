@@ -10,15 +10,14 @@ class IndexController extends AdminController
 {
     //
     public function __construct() {
-
-        parent::__construct();
         $this->template = env('THEME').'.admin.index';
-
     }
 
     public function index() {
+        $this->start('VIEW_ADMIN');
 
         $this->title = 'Панель администратора';
         return $this->renderOutPut();
     }
+
 }

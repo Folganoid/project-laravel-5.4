@@ -2,11 +2,18 @@
 
 namespace Corp\Http\Controllers\Admin;
 
+use Corp\Repositories\ArticlesRepository;
 use Illuminate\Http\Request;
 use Corp\Http\Controllers\Controller;
 
-class ArticlesController extends Controller
+class ArticlesController extends AdminController
 {
+    public function __construct(ArticlesRepository $a_rep) {
+
+        $this->template = env('THEME').'.admin.articles';
+        $this->a_rep = $a_rep;
+
+    }
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +21,20 @@ class ArticlesController extends Controller
      */
     public function index()
     {
-        //
+        $this->start('VIEW_ADMIN_ARTICLES');
+        $this->title = 'Менеджер статей';
+
+        $articles = $this->getArticles();
+        $this->content = view(env('THEME').'.admin.articles_content')->with('articles', $articles)->render();
+
+        return $this->renderOutPut();
+
+
+    }
+
+    public function getArticles()
+    {
+        return $this->a_rep->get();
     }
 
     /**
@@ -25,6 +45,7 @@ class ArticlesController extends Controller
     public function create()
     {
         //
+        $this->start('VIEW_ADMIN_ARTICLES');
     }
 
     /**
@@ -36,6 +57,7 @@ class ArticlesController extends Controller
     public function store(Request $request)
     {
         //
+        $this->start('VIEW_ADMIN_ARTICLES');
     }
 
     /**
@@ -47,6 +69,7 @@ class ArticlesController extends Controller
     public function show($id)
     {
         //
+        $this->start('VIEW_ADMIN_ARTICLES');
     }
 
     /**
@@ -58,6 +81,7 @@ class ArticlesController extends Controller
     public function edit($id)
     {
         //
+        $this->start('VIEW_ADMIN_ARTICLES');
     }
 
     /**
@@ -70,6 +94,7 @@ class ArticlesController extends Controller
     public function update(Request $request, $id)
     {
         //
+        $this->start('VIEW_ADMIN_ARTICLES');
     }
 
     /**
@@ -81,5 +106,6 @@ class ArticlesController extends Controller
     public function destroy($id)
     {
         //
+        $this->start('VIEW_ADMIN_ARTICLES');
     }
 }
