@@ -2,9 +2,12 @@
 
 namespace Corp\Http\Controllers\Admin;
 
+use Corp\Category;
+use Corp\Http\Requests\ArticleRequest;
 use Corp\Repositories\ArticlesRepository;
 use Illuminate\Http\Request;
 use Corp\Http\Controllers\Controller;
+use Gate;
 
 class ArticlesController extends AdminController
 {
@@ -29,7 +32,6 @@ class ArticlesController extends AdminController
 
         return $this->renderOutPut();
 
-
     }
 
     public function getArticles()
@@ -45,7 +47,29 @@ class ArticlesController extends AdminController
     public function create()
     {
         //
-        $this->start('VIEW_ADMIN_ARTICLES');
+        $this->checkAuth();
+        if(Gate::denies('save', new \Corp\Article)) {
+            abort(403);
+        }
+
+        $this->title = 'Добавить новый материал';
+
+        $categories = Category::select(['title', 'alias', 'parent_id', 'id'])->get();
+
+        $lists = [];
+
+        foreach ($categories as $category) {
+            if($category->parent_id == 0) {
+                $lists[$category->title] = [];
+            }
+            else {
+                $lists[$categories->where('id', $category->parent_id)->first()->title][$category->id] = $category->title;
+            }
+        }
+
+        $this->content = view(env('THEME').'.admin.articles_create_content')->with('categories', $lists)->render();
+
+        return $this->renderOutPut();
     }
 
     /**
@@ -54,10 +78,18 @@ class ArticlesController extends AdminController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ArticleRequest $request)
     {
-        //
         $this->start('VIEW_ADMIN_ARTICLES');
+        //
+        $result = $this->a_rep->addArticle($request);
+
+        if(is_array($request) && !empty($result['error'])) {
+            return back()->with($result);
+        }
+
+        return redirect('/admin')->with($result);
+
     }
 
     /**
