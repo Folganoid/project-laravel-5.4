@@ -2,6 +2,7 @@
 
 namespace Corp\Http\Controllers\Admin;
 
+use Corp\Article;
 use Corp\Category;
 use Corp\Http\Requests\ArticleRequest;
 use Corp\Repositories\ArticlesRepository;
@@ -9,7 +10,7 @@ use Illuminate\Http\Request;
 use Corp\Http\Controllers\Controller;
 use Gate;
 
-class ArticlesController extends AdminController
+class ArticleController extends AdminController
 {
     public function __construct(ArticlesRepository $a_rep) {
 
@@ -110,10 +111,35 @@ class ArticlesController extends AdminController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Article $article)
     {
         //
-        $this->start('VIEW_ADMIN_ARTICLES');
+       $this->start('VIEW_ADMIN_ARTICLES');
+       //$article = Article::where('alias', $alias);
+
+        if(Gate::denies('edit', new Article)) {
+            abort(403);
+        }
+
+        $article->img = json_decode($article->img);
+        $lists = [];
+
+        $categories = Category::select(['title', 'alias', 'parent_id', 'id'])->get();
+
+        foreach ($categories as $category) {
+            if($category->parent_id == 0) {
+                $lists[$category->title] = [];
+            }
+            else {
+                $lists[$categories->where('id', $category->parent_id)->first()->title][$category->id] = $category->title;
+            }
+        }
+
+        $this->title = 'Редактирование материала -'.$article->title;
+        $this->content = view(env('THEME').'.admin.articles_create_content')->with(['categories' => $lists, 'article' => $article])->render();
+
+        return $this->renderOutPut();
+
     }
 
     /**

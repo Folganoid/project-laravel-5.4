@@ -15,7 +15,7 @@ abstract class Repository
 
     protected $model = FALSE;
 
-    public function get($select = '*', $take = FALSE, $pagination = FALSE, $where = FALSE) {
+    public function get($select = '*', $take = FALSE, $pagination = FALSE, $where = FALSE, $orderBy = FALSE) {
 
         $builder = $this->model->select($select);
 
@@ -29,6 +29,10 @@ abstract class Repository
 
         if($pagination) {
             return $this->check($builder->paginate(Config::get('settings.paginate')));
+        }
+
+        if($orderBy[0] && $orderBy[1]) {
+            $builder->orderBy($orderBy[0], $orderBy[1]);
         }
 
        return $this->check($builder->get());
