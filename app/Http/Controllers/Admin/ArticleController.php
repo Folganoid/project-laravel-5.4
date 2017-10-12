@@ -149,10 +149,19 @@ class ArticleController extends AdminController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(ArticleRequest $request,Article $article)
     {
         //
         $this->start('VIEW_ADMIN_ARTICLES');
+
+        $result = $this->a_rep->updateArticle($request, $article);
+
+        if(is_array($result) && !empty($result['error'])) {
+            return back()->with($result);
+        }
+
+        return redirect('/admin')->with($result);
+
     }
 
     /**
@@ -161,9 +170,22 @@ class ArticleController extends AdminController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Article $article)
     {
         //
-        $this->start('VIEW_ADMIN_ARTICLES');
+
+        $result = $this->a_rep->deleteArticle($article);
+
+        if(is_array($result) && !empty($result['error'])) {
+            return back()->with($result);
+        }
+
+        $article->comment()->delete();
+
+        if($article->delete()) {
+            $result = ['status' => 'Материал удален'];
+        }
+
+        return redirect('/admin')->with($result);
     }
 }

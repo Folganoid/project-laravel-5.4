@@ -48,7 +48,7 @@
                 </label>
                 <div class="input-prepend">
                     <span class="add-on"><i class="icon-user"></i></span>
-                    {!! Form::text('alias', isset($article->alias) ? $article->aslias : old('alias'), ['placeholder' => 'Введите псевдоним']) !!}
+                    {!! Form::text('alias', isset($article->alias) ? $article->alias : old('alias'), ['placeholder' => 'Введите псевдоним']) !!}
                 </div>
             </li>
 
