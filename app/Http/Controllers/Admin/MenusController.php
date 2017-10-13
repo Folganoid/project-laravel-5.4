@@ -2,24 +2,28 @@
 
 namespace Corp\Http\Controllers\Admin;
 
-use Corp\Repositories\PermissionsRepository;
-use Corp\Repositories\RolesRepository;
+use Corp\Repositories\ArticlesRepository;
+use Corp\Repositories\MenusRepository;
+use Corp\Repositories\PortfoliosRepository;
 use Illuminate\Http\Request;
+use Menu;
 
-class PermissionsController extends AdminController
+class MenusController extends AdminController
 {
 
-    protected $per_rep;
-    protected $rol_rep;
+    protected $m_rep;
+    protected $a_rep;
+    protected $p_rep;
 
-    public function __construct(PermissionsRepository $per_rep, RolesRepository $rol_rep) {
+    public function __construct(MenusRepository $m_rep, ArticlesRepository $a_rep, PortfoliosRepository $p_rep)
+    {
+        $this->m_rep = $m_rep;
+        $this->a_rep = $m_rep;
+        $this->p_rep = $m_rep;
 
-        $this->per_rep = $per_rep;
-        $this->rol_rep = $rol_rep;
+        $this->template = env('THEME').'.admin.menus';
 
-        $this->template = env('THEME').'.admin.permissions';
     }
-
 
     /**
      * Display a listing of the resource.
@@ -28,27 +32,41 @@ class PermissionsController extends AdminController
      */
     public function index()
     {
-        $this->start('EDIT_USERS');
-        $this->title = 'Менеджер прав пользователей';
+        //
+        $this->start('VIEW_ADMIN_MENU');
 
-        $roles = $this->getRoles();
-        $permissions = $this->getPermissions();
-
-        $this->content = view(env('THEME').'.admin.permissions_content')->with(['roles' => $roles, 'priv' => $permissions])->render();
+        $menu = $this->getMenus();
+        $this->content = view(env('THEME').'.admin.menus_content')->with('menus', $menu)->render();
 
         return $this->renderOutPut();
+
     }
 
-    public function getRoles() {
-        $roles = $this->rol_rep->get();
+    public function getMenus()
+    {
+        $menu = $this->m_rep->get();
 
-        return $roles;
+        if($menu->isEmpty()) {
+            return FALSE;
+        }
+
+        return Menu::make('forMenuPart', function($m) use($menu) {
+
+            foreach($menu as $item) {
+                if($item->parent == 0) {
+                    $m->add($item->title, $item->path)->id($item->id);
+                }
+
+                else {
+                    if($m->find($item->parent)) {
+                        $m->find($item->parent)->add($item->title, $item->path)->id($item->id);
+                    }
+                }
+            }
+
+        });
     }
 
-    public function getPermissions() {
-        $permissions = $this->per_rep->get();
-        return $permissions;
-    }
 
     /**
      * Show the form for creating a new resource.
@@ -68,15 +86,7 @@ class PermissionsController extends AdminController
      */
     public function store(Request $request)
     {
-        $this->start('EDIT_USERS');
         //
-        $result = $this->per_rep->changePermission($request);
-
-        if(is_array($request) && !empty($result['error'])) {
-            return back()->with($result);
-        }
-
-        return back()->with($result);
     }
 
     /**
